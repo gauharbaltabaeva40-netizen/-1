@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>My Study Method Finder</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f1f5f9;
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin: 0 0 8px 0;
+            color: #0f172a;
+        }
+        .sub {
+            color: #475569;
+            margin-bottom: 24px;
+            border-left: 4px solid #3b82f6;
+            padding-left: 12px;
+        }
+        label {
+            font-weight: 600;
+            display: block;
+            margin: 16px 0 6px 0;
+            color: #1e293b;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 20px;
+            border: 1px solid #cbd5e1;
+            background: #fefefe;
+            font-size: 1rem;
+        }
+        textarea {
+            border-radius: 24px;
+            font-family: monospace;
+        }
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 6px;
+        }
+        .radio-group label {
+            font-weight: normal;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button.secondary {
+            background: #334155;
+        }
+        button.warning {
+            background: #ef4444;
+        }
+        button.small {
+            background: #e2e8f0;
+            color: #0f172a;
+            margin-top: 8px;
+            font-weight: normal;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .stat-box {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 12px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .method-badge {
+            background: #e0f2fe;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin: 4px;
+        }
+        hr {
+            margin: 24px 0;
+        }
+        .footer-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .note {
+            font-size: 0.8rem;
+            color: #475569;
+            margin-top: 12px;
+        }
+        @media (max-width: 500px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>📚 My Study Method Finder</h1>
+        <div class="sub">Answer these 2 minutes a day → I'll find your personal method.</div>
+
+        <!-- Daily entry form -->
+        <label>📅 Date (auto-filled)</label>
+        <input type="date" id="sessionDate" readonly style="background:#eef2ff;">
+
+        <label>😌 Before study: How do you feel?</label>
+        <select id="mood">
+            <option value="tired">Tired / low energy</option>
+            <option value="neutral">Neutral / okay</option>
+            <option value="sharp">Sharp / focused</option>
+            <option value="anxious">Anxious / stressed</option>
+            <option value="curious">Curious / motivated</option>
+        </select>
+
+        <label>🎯 One goal for this session</label>
+        <input type="text" id="goal" placeholder="e.g., finish chapter 3, 10 problems, revise verbs" autocomplete="off">
+
+        <label>⚙️ Which method did you use? (pick one)</label>
+        <select id="method">
+            <option value="practice_questions">Practice questions / problems</option>
+            <option value="teach_out_loud">Teach out loud (explain to imaginary student)</option>
+            <option value="summarize_no_look">Summarize without looking</option>
+            <option value="flashcards">Flashcards / Anki</option>
+            <option value="timed_recall">Timed recall / brain dump</option>
+            <option value="other">Other (write below)</option>
+        </select>
+        <input type="text" id="otherMethod" placeholder="If 'Other', describe method" style="margin-top: 6px;">
+
+        <hr>
+
+        <label>✅ AFTER study (answer honestly)</label>
+
+        <label>🎯 Focus level (1 = scattered, 5 = deep flow)</label>
+        <div class="radio-group" id="focusGroup">
+            <label><input type="radio" name="focus" value="1"> 1</label>
+            <label><input type="radio" name="focus" value="2"> 2</label>
+            <label><input type="radio" name="focus" value="3"> 3</label>
+            <label><input type="radio" name="focus" value="4"> 4</label>
+            <label><input type="radio" name="focus" value="5"> 5</label>
+        </div>
+
+        <label>⏱️ Did time feel short or long?</label>
+        <div class="radio-group">
+            <label><input type="radio" name="timeFeel" value="short"> Short (flow state)</label>
+            <label><input type="radio" name="timeFeel" value="normal"> Normal</label>
+            <label><input type="radio" name="timeFeel" value="long"> Long (dragged)</label>
+        </div>
+
+        <label>🧠 Can you recall 70% of what you studied without looking?</label>
+        <div class="radio-group">
+            <label><input type="radio" name="recall" value="yes"> Yes</label>
+            <label><input type="radio" name="recall" value="almost"> Almost</label>
+            <label><input type="radio" name="recall" value="no"> No</label>
+        </div>
+
+        <label>🔁 Do you want to study again tomorrow using the SAME method?</label>
+        <div class="radio-group">
+            <label><input type="radio" name="repeat" value="yes"> Yes</label>
+            <label><input type="radio" name="repeat" value="maybe"> Maybe</label>
+            <label><input type="radio" name="repeat" value="no"> No</label>
+        </div>
+
+        <label>✍️ One sentence: what worked or didn't work?</label>
+        <textarea id="insight" rows="2" placeholder="e.g., I focus better when I start with hard problems first"></textarea>
+
+        <button id="saveSessionBtn">💾 Save today's session</button>
+        <div class="note">Data stays on your device. You can export & send to me for analysis.</div>
+    </div>
+
+    <!-- Analytics card -->
+    <div class="card">
+        <h2>📊 Your analytics</h2>
+        <div id="analyticsContent">
+            <p>Loading your data...</p>
+        </div>
+        <div class="footer-buttons">
+            <button id="exportBtn" class="secondary">📎 Export data (send to me)</button>
+            <button id="resetBtn" class="warning">🗑️ Reset all data</button>
+        </div>
+        <div class="note">
+            💡 After exporting, send the .json file to me (the assistant) and I will tell you YOUR personal favorite study method + action plan.
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- DATA STORAGE ----------
+    let sessions = [];
+
+    function loadData() {
+        const stored = localStorage.getItem("studyTrackerSessions");
+        if (stored) {
+            sessions = JSON.parse(stored);
+        } else {
+            sessions = [];
+        }
+        renderAnalytics();
+    }
+
+    function saveToLocal() {
+        localStorage.setItem("studyTrackerSessions", JSON.stringify(sessions));
+        renderAnalytics();
+    }
+
+    // get today's date YYYY-MM-DD
+    function todayString() {
+        const d = new Date();
+        return d.toISOString().split('T')[0];
+    }
+
+    // Check if already saved today (to avoid duplicates)
+    function alreadySavedToday() {
+        const today = todayString();
+        return sessions.some(s => s.date === today);
+    }
+
+    // save current form
+    function saveCurrentSession() {
+        // Get values
+        const date = todayString();
+        if (alreadySavedToday()) {
+            alert("You already saved a session for today. You can edit by resetting today's entry (use reset all data or wait until tomorrow). For simplicity, only one entry per day.");
+            return;
+        }
+
+        const mood = document.getElementById("mood").value;
+        const goal = document.getElementById("goal").value.trim() || "not specified";
+        let method = document.getElementById("method").value;
+        const otherMethodRaw = document.getElementById("otherMethod").value.trim();
+        if (method === "other" && otherMethodRaw) method = otherMethodRaw;
+        else if (method === "other") method = "other (no detail)";
+
+        const focusElem = document.querySelector('input[name="focus"]:checked');
+        const focus = focusElem ? parseInt(focusElem.value) : null;
+        const timeFeelElem = document.querySelector('input[name="timeFeel"]:checked');
+        const timeFeel = timeFeelElem ? timeFeelElem.value : null;
+        const recallElem = document.querySelector('input[name="recall"]:checked');
+        const recall = recallElem ? recallElem.value : null;
+        const repeatElem = document.querySelector('input[name="repeat"]:checked');
+        const repeat = repeatElem ? repeatElem.value : null;
+        const insight = document.getElementById("insight").value.trim() || "";
+
+        // validation
+        if (focus === null || timeFeel === null || recall === null || repeat === null) {
+            alert("Please answer all AFTER-study questions (focus, time feel, recall, repeat).");
+            return;
+        }
+
+        const session = {
+            date: date,
+            mood, goal, method,
+            focus, timeFeel, recall, repeat, insight
+        };
+        sessions.push(session);
+        saveToLocal();
+
+        // clear radio selections after save (optional)
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+        document.getElementById("goal").value = "";
+        document.getElementById("insight").value = "";
+        document.getElementById("otherMethod").value = "";
+        document.getElementById("method").value = "practice_questions";
+        document.getElementById("mood").value = "neutral";
+        alert("Session saved! Check analytics below.");
+    }
+
+    // analytics rendering
+    function renderAnalytics() {
+        const container = document.getElementById("analyticsContent");
+        if (!sessions.length) {
+            container.innerHTML = `<p>📭 No sessions yet. Start by saving your first study session above.</p>`;
+            return;
+        }
+
+        // Basic stats
+        const totalSessions = sessions.length;
+        const avgFocus = sessions.reduce((sum, s) => sum + (s.focus || 0), 0) / totalSessions;
+        const highFocusSessions = sessions.filter(s => s.focus >= 4).length;
+        const recallYesCount = sessions.filter(s => s.recall === "yes").length;
+        const recallPercent = Math.round((recallYesCount / totalSessions) * 100);
+        const timeShortCount = sessions.filter(s => s.timeFeel === "short").length;
+        
+        // best method by avg focus (method with at least 2 sessions)
+        const methodMap = new Map();
+        sessions.forEach(s => {
+            const m = s.method;
+            if (!methodMap.has(m)) methodMap.set(m, { sumFocus: 0, count: 0, totalRecallYes: 0, totalTimeShort: 0 });
+            const entry = methodMap.get(m);
+            entry.sumFocus += s.focus;
+            entry.count++;
+            if (s.recall === "yes") entry.totalRecallYes++;
+            if (s.timeFeel === "short") entry.totalTimeShort++;
+        });
+        let bestMethod = null;
+        let bestMethodScore = -1;
+        for (let [method, data] of methodMap.entries()) {
+            if (data.count >= 1) { // even single session can be candidate
+                const avg = data.sumFocus / data.count;
+                if (avg > bestMethodScore) {
+                    bestMethodScore = avg;
+                    bestMethod = method;
+                }
+            }
+        }
+        
+        // most used method
+        let mostUsedMethod = null;
+        let maxCount = 0;
+        for (let [method, data] of methodMap.entries()) {
+            if (data.count > maxCount) {
+                maxCount = data.count;
+                mostUsedMethod = method;
+            }
+        }
+
+        // top insight phrases (simple)
+        const insightsList = sessions.map(s => s.insight).filter(i => i && i.length > 5);
+        const topInsight = insightsList.length ? insightsList[0] : "Keep adding insights!";
+
+        // latest trend: last 3 sessions focus change
+        const lastThree = sessions.slice(-3).map(s => s.focus);
+        let trend = "stable";
+        if (lastThree.length >= 2) {
+            if (lastThree[lastThree.length-1] > lastThree[lastThree.length-2]) trend = "improving 🔼";
+            else if (lastThree[lastThree.length-1] < lastThree[lastThree.length-2]) trend = "declining 🔽";
+            else trend = "stable";
+        }
+
+        const html = `
+            <div class="stats-grid">
+                <div class="stat-box"><div class="stat-number">${totalSessions}</div>sessions</div>
+                <div class="stat-box"><div class="stat-number">${avgFocus.toFixed(1)}</div>avg focus (1-5)</div>
+                <div class="stat-box"><div class="stat-number">${recallPercent}%</div>recall “yes”</div>
+                <div class="stat-box"><div class="stat-number">${timeShortCount}</div>sessions with time “short” (flow)</div>
+            </div>
+            <p><strong>🔥 Most effective method so far:</strong> <span class="method-badge">${bestMethod || "?"}</span> (focus score ${bestMethodScore?.toFixed(1) || "—"})</p>
+            <p><strong>📚 Most used method:</strong> ${mostUsedMethod || "—"}</p>
+            <p><strong>📈 Focus trend (last 3 sessions):</strong> ${trend}</p>
+            <p><strong>💡 Recent insight:</strong> “${topInsight}”</p>
+            <p><strong>⭐ High-focus days (≥4):</strong> ${highFocusSessions} out of ${totalSessions}</p>
+        `;
+        container.innerHTML = html;
+    }
+
+    // export data as JSON file
+    function exportData() {
+        const dataStr = JSON.stringify(sessions, null, 2);
+        const blob = new Blob([dataStr], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `study_data_${todayString()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        alert("Data exported! Send this .json file to me (assistant) and I will decode YOUR perfect study method.");
+    }
+
+    function resetAllData() {
+        if (confirm("⚠️ Delete ALL sessions? This cannot be undone.")) {
+            sessions = [];
+            saveToLocal();
+            document.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'radio') el.checked = false;
+                else if (el.type === 'text' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+                    if (el.id !== 'sessionDate') el.value = '';
+                }
+            });
+            document.getElementById("method").value = "practice_questions";
+            document.getElementById("mood").value = "neutral";
+            alert("All data erased.");
+        }
+    }
+
+    // set today's date readonly
+    document.getElementById("sessionDate").value = todayString();
+
+    // event listeners
+    document.getElementById("saveSessionBtn").addEventListener("click", saveCurrentSession);
+    document.getElementById("exportBtn").addEventListener("click", exportData);
+    document.getElementById("resetBtn").addEventListener("click", resetAllData);
+
+    loadData();
+</script>
+</body>
+</html>
